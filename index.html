@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro · Jornada AGRO.ReD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cacao:#4a2c1d; --cacao-2:#6b3f26; --hoja:#3e6b3a; --hoja-2:#2f5530;
+      --oro:#c8963e; --crema:#f7f1e8; --papel:#fffdf9; --tinta:#2a1d16;
+      --gris:#7a6a5f; --linea:#e3d7c8; --error:#b3261e;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      background:var(--crema); color:var(--tinta); line-height:1.5;
+      -webkit-font-smoothing:antialiased; min-height:100vh;
+    }
+    .hero{
+      background:
+        radial-gradient(120% 90% at 100% 0%, rgba(200,150,62,.35) 0%, transparent 55%),
+        linear-gradient(160deg, var(--cacao) 0%, var(--cacao-2) 55%, var(--hoja-2) 130%);
+      color:#fff; padding:28px 20px 72px; position:relative; overflow:hidden;
+    }
+    .hero::after{ /* hojas decorativas */
+      content:""; position:absolute; right:-40px; bottom:-30px; width:220px; height:220px;
+      background:
+        radial-gradient(ellipse 38% 18% at 50% 50%, rgba(255,255,255,.08) 98%, transparent 100%) 0 0/110px 110px;
+      transform:rotate(-30deg); pointer-events:none;
+    }
+    .wrap{max-width:560px;margin:0 auto;position:relative;z-index:1}
+    .marca{display:inline-flex;align-items:center;gap:8px;font-weight:600;letter-spacing:.04em;
+      font-size:.85rem;background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.2);padding:5px 12px;border-radius:999px}
+    .marca i{width:8px;height:8px;border-radius:50%;background:var(--oro);display:inline-block}
+    .tipo{margin:18px 0 4px;font-size:.85rem;color:#f1dcb8;font-weight:500;letter-spacing:.02em}
+    h1{font-family:Fraunces,Georgia,serif;font-weight:700;font-size:1.65rem;line-height:1.2;margin:0 0 10px}
+    .sub{margin:0;color:#efe6dc;font-size:.95rem}
+    .meta{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;font-size:.88rem;color:#fff}
+    .meta span{display:inline-flex;align-items:center;gap:6px}
+
+    .card{
+      max-width:560px;margin:-48px auto 0;background:var(--papel);border-radius:18px;
+      box-shadow:0 10px 30px rgba(74,44,29,.12),0 1px 0 rgba(74,44,29,.04);
+      padding:24px 20px;position:relative;z-index:2;
+    }
+    @media (min-width:600px){ .card{padding:30px 32px} h1{font-size:1.9rem} }
+    .card h2{font-family:Fraunces,Georgia,serif;font-size:1.25rem;margin:0 0 4px;color:var(--cacao)}
+    .card .hint{margin:0 0 20px;color:var(--gris);font-size:.9rem}
+
+    .campo{margin-bottom:16px}
+    label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px;color:var(--cacao)}
+    input{
+      width:100%;font:inherit;font-size:16px;padding:13px 14px;border-radius:12px;
+      border:1.5px solid var(--linea);background:#fff;color:var(--tinta);
+      transition:border-color .15s, box-shadow .15s;
+    }
+    input::placeholder{color:#b3a69b}
+    input:focus{outline:none;border-color:var(--hoja);box-shadow:0 0 0 4px rgba(62,107,58,.15)}
+    .campo.err input{border-color:var(--error);box-shadow:0 0 0 4px rgba(179,38,30,.1)}
+    .msg{display:none;color:var(--error);font-size:.83rem;margin-top:5px}
+    .campo.err .msg{display:block}
+    .fila{display:grid;grid-template-columns:1fr;gap:0 14px}
+    @media (min-width:600px){ .fila{grid-template-columns:1fr 1fr} }
+
+    .alerta{display:none;background:#fbeae8;border:1px solid #f0c4bf;color:#7d1a14;
+      padding:12px 14px;border-radius:12px;font-size:.9rem;margin-bottom:16px}
+    .alerta.show{display:block}
+
+    button{
+      width:100%;font:inherit;font-weight:600;font-size:1.02rem;color:#fff;cursor:pointer;
+      background:linear-gradient(180deg,var(--hoja),var(--hoja-2));border:0;border-radius:12px;
+      padding:15px;margin-top:6px;box-shadow:0 4px 14px rgba(47,85,48,.3);
+      display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .08s, opacity .15s;
+    }
+    button:active{transform:translateY(1px)}
+    button[disabled]{opacity:.7;cursor:wait}
+    .spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;
+      border-radius:50%;animation:g .8s linear infinite;display:none}
+    button[disabled] .spin{display:inline-block}
+    @keyframes g{to{transform:rotate(360deg)}}
+    .privacidad{font-size:.78rem;color:var(--gris);text-align:center;margin:14px 0 0}
+
+    /* Pantalla de éxito */
+    #ok{display:none;text-align:center;padding:12px 0 6px}
+    .check{width:76px;height:76px;border-radius:50%;margin:4px auto 16px;
+      background:linear-gradient(180deg,var(--hoja),var(--hoja-2));display:grid;place-items:center;
+      box-shadow:0 8px 22px rgba(47,85,48,.35);animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+    .check svg{width:38px;height:38px}
+    .check path{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .5s .25s ease forwards}
+    @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+    @keyframes draw{to{stroke-dashoffset:0}}
+    #ok h2{font-size:1.5rem}
+    #ok p{color:var(--gris);margin:6px 0 0}
+    #ok .chip{display:inline-block;margin-top:16px;background:var(--crema);color:var(--cacao);
+      border:1px solid var(--linea);padding:8px 14px;border-radius:999px;font-size:.88rem;font-weight:500}
+    #ok.dup .check{background:linear-gradient(180deg,var(--oro),#a8782b);box-shadow:0 8px 22px rgba(200,150,62,.35)}
+
+    .acerca{max-width:560px;margin:22px auto 0;padding:0 20px 36px;color:var(--gris);font-size:.86rem}
+    .acerca summary{cursor:pointer;color:var(--cacao);font-weight:600;list-style:none;
+      display:flex;align-items:center;gap:8px}
+    .acerca summary::before{content:"+";display:inline-grid;place-items:center;width:20px;height:20px;
+      border-radius:50%;border:1.5px solid var(--cacao);font-size:.8rem;line-height:1}
+    .acerca details[open] summary::before{content:"–"}
+    .acerca p{margin:10px 0 0}
+    .ejes{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+    .ejes li{background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:9px 12px}
+    .ejes b{color:var(--hoja-2)}
+    footer{text-align:center;font-size:.78rem;color:var(--gris);padding:0 20px 28px}
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="marca"><i></i>AGRO.ReD</span>
+      <p class="tipo">Jornada Técnico-Científica</p>
+      <h1>Buscando alternativas para la sostenibilidad: ciencia e innovación para la cadena agroalimentaria</h1>
+      <p class="sub">Lanzamiento oficial del proyecto de sostenibilidad del cacao en Zamora Chinchipe y Morona Santiago.</p>    </div>
+  </header>
+
+  <main class="card">
+    <section id="formulario">
+      <h2>Registro de asistencia</h2>
+      <p class="hint">Completa tus datos para confirmar tu asistencia.</p>
+
+      <div class="alerta" id="alerta"></div>
+
+      <form id="f" novalidate autocomplete="on">
+        <div class="fila">
+          <div class="campo" id="c-nombres">
+            <label for="nombres">Nombres</label>
+            <input id="nombres" name="nombres" placeholder="Ej. María José" autocomplete="given-name" required>
+            <div class="msg">Ingresa tus nombres.</div>
+          </div>
+          <div class="campo" id="c-apellidos">
+            <label for="apellidos">Apellidos</label>
+            <input id="apellidos" name="apellidos" placeholder="Ej. Pérez Andrade" autocomplete="family-name" required>
+            <div class="msg">Ingresa tus apellidos.</div>
+          </div>
+        </div>
+
+        <div class="campo" id="c-celular">
+          <label for="celular">Celular</label>
+          <input id="celular" name="celular" type="tel" inputmode="numeric" maxlength="10"
+                 placeholder="09XXXXXXXX" autocomplete="tel-national" required>
+          <div class="msg">Debe tener 10 dígitos y empezar con 09.</div>
+        </div>
+
+        <div class="campo" id="c-correo">
+          <label for="correo">Correo electrónico</label>
+          <input id="correo" name="correo" type="email" inputmode="email"
+                 placeholder="nombre@correo.com" autocomplete="email" autocapitalize="off" required>
+          <div class="msg">Ingresa un correo válido.</div>
+        </div>
+
+        <div class="campo" id="c-institucion">
+          <label for="institucion">Institución</label>
+          <input id="institucion" name="institucion" placeholder="Universidad, empresa, GAD, asociación…"
+                 autocomplete="organization" required>
+          <div class="msg">Ingresa tu institución.</div>
+        </div>
+
+        <button type="submit" id="btn"><span class="spin"></span><span id="btn-txt">Registrar</span></button>
+        <p class="privacidad">Tus datos se usarán solo para el control de asistencia de la jornada.</p>
+      </form>
+    </section>
+
+    <section id="ok" aria-live="polite">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2 id="ok-titulo">¡Registrado!</h2>
+      <p id="ok-texto">Gracias por acompañarnos.</p>
+      <span class="chip" id="ok-chip">Ya puedes cerrar esta página</span>
+    </section>
+  </main>
+
+  <div class="acerca">
+    <details>
+      <summary>Sobre la jornada y AGRO.ReD</summary>
+      <p>La jornada marca el lanzamiento oficial del proyecto, que busca fortalecer la sostenibilidad de los sistemas productivos de cacao en Zamora Chinchipe y Morona Santiago a partir de tres ejes:</p>
+      <ul class="ejes">
+        <li><b>Restauración edáfica</b>: captura de carbono y reducción de metales pesados.</li>
+        <li><b>Rasgos funcionales y calidad</b> del cacao.</li>
+        <li><b>Valor agregado</b>: mejora de cosecha y poscosecha y fortalecimiento de capacidades de los productores.</li>
+      </ul>
+      <p>AGRO.ReD es una red de investigación fundada en la Universidad de Cuenca y registrada en REDU desde 2023, que articula a investigadores de ocho universidades ecuatorianas para fortalecer la cadena de suministro agroalimentaria en los Andes ecuatorianos y promover su transición hacia sistemas alimentarios sostenibles, resilientes y centrados en el ser humano.</p>
+      <p>La jornada culminará con una plenaria orientada a identificar proyectos futuros, líneas de investigación conjuntas y oportunidades de cooperación.</p>
+    </details>
+  </div>
+
+  <footer>AGRO.ReD · Universidad de Cuenca</footer>
+
+<script>
+  const API = 'https://script.google.com/macros/s/AKfycbwGr6IJhE82K9gEk8kGtMX9IP8v5gGUdv9T6CYXEFnOREO7KL1nVKT2u1hcEs_Vr5Fr/exec';
+  const $ = id => document.getElementById(id);
+  const reglas = {
+    nombres: v => v.trim().length >= 2,
+    apellidos: v => v.trim().length >= 2,
+    celular: v => /^09\d{8}$/.test(v),
+    correo: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()),
+    institucion: v => v.trim().length >= 2,
+  };
+
+  // Celular: solo dígitos
+  $('celular').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10); });
+
+  // Quitar error al corregir
+  Object.keys(reglas).forEach(k => {
+    $(k).addEventListener('input', () => {
+      if (reglas[k]($(k).value)) $('c-' + k).classList.remove('err');
+      $('alerta').classList.remove('show');
+    });
+  });
+
+  function marcar(k, msg) {
+    const c = $('c-' + k);
+    if (msg) c.querySelector('.msg').textContent = msg;
+    c.classList.add('err');
+  }
+
+  function cargando(on) {
+    $('btn').disabled = on;
+    $('btn-txt').textContent = on ? 'Registrando…' : 'Registrar';
+  }
+
+  $('f').addEventListener('submit', e => {
+    e.preventDefault();
+    $('alerta').classList.remove('show');
+    let primero = null;
+    const datos = {};
+    Object.keys(reglas).forEach(k => {
+      datos[k] = $(k).value;
+      const c = $('c-' + k);
+      if (!reglas[k](datos[k])) { c.classList.add('err'); primero = primero || k; }
+      else c.classList.remove('err');
+    });
+    if (primero) { $(primero).focus(); return; }
+
+    cargando(true);
+    fetch(API, { method: 'POST', body: JSON.stringify(datos) })  // text/plain: sin preflight ni cookies de Google
+      .then(res => res.json())
+      .then(r => {
+        cargando(false);
+        if (r && r.ok) return exito(r.nombre);
+        if (r && r.duplicado) return duplicado(r.mensaje);
+        if (r && r.campo) { marcar(r.campo, r.mensaje); $(r.campo).focus(); return; }
+        error(r && r.mensaje);
+      })
+      .catch(() => { cargando(false); error(); });
+  });
+
+  function exito(nombre) {
+    $('formulario').style.display = 'none';
+    $('ok-titulo').textContent = '¡Registrado!';
+    $('ok-texto').textContent = 'Gracias, ' + (nombre || '') + '. Tu asistencia quedó confirmada.';
+    $('ok').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function duplicado(msg) {
+    $('formulario').style.display = 'none';
+    $('ok').classList.add('dup');
+    $('ok-titulo').textContent = 'Ya estás registrado';
+    $('ok-texto').textContent = (msg || 'Tus datos ya constan en la lista.') + ' No necesitas registrarte de nuevo.';
+    $('ok').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function error(msg) {
+    const a = $('alerta');
+    a.textContent = msg || 'No se pudo registrar. Revisa tu conexión e inténtalo de nuevo.';
+    a.classList.add('show');
+  }
+</script>
+</body>
+</html>
